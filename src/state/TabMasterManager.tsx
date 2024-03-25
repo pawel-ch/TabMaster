@@ -322,7 +322,7 @@ export class TabMasterManager {
   }
 
   /**
-   * Handles updating state when the the achievement cache changes.
+   * Handles updating state when the achievement cache changes.
    * @param _size The size of the achievements map.
    */
   private handleAchievementsReaction(_size: number) {
@@ -709,7 +709,7 @@ export class TabMasterManager {
   /**
    * Creates a new tab container for each of the default tabs.
    * @param defaultTabSettings The default tabs.
-   * @returns Tab containers for all of the default tabs.
+   * @returns Tab containers for all the default tabs.
    */
   private addDefaultTabContainer(defaultTabSettings: TabContainer) {
     this.tabsMap.set(defaultTabSettings.id, defaultTabSettings);

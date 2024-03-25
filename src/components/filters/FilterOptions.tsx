@@ -837,7 +837,7 @@ const AchievementsFilterOptions: VFC<FilterOptionsProps<'achievements'>> = ({ in
 };
 
 /**
- * The options for an sd card filter
+ * The options for a sd card filter
  */
 const SDCardFilterOptions: VFC<FilterOptionsProps<'sd card'>> = ({ index, setContainingGroupFilters, filter, containingGroupFilters }) => {
   const isMicroSDeckInstalled = useMemo(() => MicroSDeckInterop.isInstallOk(), []);

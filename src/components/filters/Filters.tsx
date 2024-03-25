@@ -80,7 +80,7 @@ type FilterFunction = (params: FilterParams<FilterType>, appOverview: SteamAppOv
 
 
 /**
- * Define the deafult params for a filter type here
+ * Define the default params for a filter type here
  * Checking and settings defaults in component is unnecessary
  */
 export const FilterDefaultParams: { [key in FilterType]: FilterParams<key> } = {
