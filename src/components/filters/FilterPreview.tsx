@@ -69,17 +69,17 @@ const DeckCompatFilterPreview: VFC<FilterPreviewProps<'deck compatibility'>> = (
 
 const ReviewScoreFilterPreview: VFC<FilterPreviewProps<'review score'>> = ({ filter }) => {
   const { scoreThreshold, condition, type } = filter.params;
-  return <FilterPreviewGeneric filter={filter} displayData={type === 'metacritic' ? `Metacritic of ${scoreThreshold} or ${condition === 'above' ? 'higher' : 'lower'}` : `At ${condition === 'above' ? 'least' : 'most'} ${scoreThreshold}% positive Steam reviews`} />;
+  return <FilterPreviewGeneric filter={filter} displayData={type === 'metacritic' ? `Metacritic of ${scoreThreshold} or ${condition === 'gte' ? 'higher' : 'lower'}` : `At ${condition === 'gte' ? 'least' : 'most'} ${scoreThreshold}% positive Steam reviews`} />;
 };
 
 const TimePlayedFilterPreview: VFC<FilterPreviewProps<'time played'>> = ({ filter }) => {
   const { timeThreshold, condition, units } = filter.params;
-  return <FilterPreviewGeneric filter={filter} displayData={`${timeThreshold} ${timeThreshold === 1 ? units.slice(0, -1) : units} or ${condition === 'above' ? 'more' : 'less'}`} />;
+  return <FilterPreviewGeneric filter={filter} displayData={`${timeThreshold} ${timeThreshold === 1 ? units.slice(0, -1) : units} or ${condition === 'gte' ? 'more' : 'less'}`} />;
 };
 
 const SizeOnDiskFilterPreview: VFC<FilterPreviewProps<'size on disk'>> = ({ filter }) => {
   const { gbThreshold, condition } = filter.params;
-  return <FilterPreviewGeneric filter={filter} displayData={`${gbThreshold < 1 ? gbThreshold * 1000 : gbThreshold} ${gbThreshold < 1 ? 'MB' : 'GB'} or ${condition === 'above' ? 'more' : 'less'}`} />;
+  return <FilterPreviewGeneric filter={filter} displayData={`${gbThreshold < 1 ? gbThreshold * 1000 : gbThreshold} ${gbThreshold < 1 ? 'MB' : 'GB'} or ${condition === 'gte' ? 'more' : 'less'}`} />;
 };
 
 const ReleaseDateFilterPreview: VFC<FilterPreviewProps<'release date'>> = ({ filter }) => {
@@ -87,10 +87,10 @@ const ReleaseDateFilterPreview: VFC<FilterPreviewProps<'release date'>> = ({ fil
 
   if (filter.params.date) {
     const { day, month, year } = filter.params.date;
-    displayData = `${!day ? 'In' : 'On'} or ${filter.params.condition === 'above' ? 'after' : 'before'} ${dateToLabel(year, month, day, { dateStyle: 'long' })}`;
+    displayData = `${!day ? 'In' : 'On'} or ${filter.params.condition === 'gte' ? 'after' : 'before'} ${dateToLabel(year, month, day, { dateStyle: 'long' })}`;
   } else {
     const daysAgo = filter.params.daysAgo;
-    displayData = `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${filter.params.condition === 'above' ? 'later' : 'earlier'}`;
+    displayData = `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${filter.params.condition === 'gte' ? 'later' : 'earlier'}`;
   }
 
   return <FilterPreviewGeneric filter={filter} displayData={displayData} />;
@@ -101,10 +101,10 @@ const LastPlayedFilterPreview: VFC<FilterPreviewProps<'last played'>> = ({ filte
 
   if (filter.params.date) {
     const { day, month, year } = filter.params.date;
-   displayData = `${!day ? 'In' : 'On'} or ${filter.params.condition === 'above' ? 'after' : 'before'} ${dateToLabel(year, month, day, { dateStyle: 'long' })}`;
+   displayData = `${!day ? 'In' : 'On'} or ${filter.params.condition === 'gte' ? 'after' : 'before'} ${dateToLabel(year, month, day, { dateStyle: 'long' })}`;
   } else {
     const daysAgo = filter.params.daysAgo;
-    displayData = `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${filter.params.condition === 'above' ? 'later' : 'earlier'}`;
+    displayData = `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${filter.params.condition === 'gte' ? 'later' : 'earlier'}`;
   }
 
   return <FilterPreviewGeneric filter={filter} displayData={displayData} />;
@@ -124,7 +124,13 @@ const SteamFeaturesFilterPreview: VFC<FilterPreviewProps<'steam features'>> = ({
 
 const AchievementsFilterPreview: VFC<FilterPreviewProps<'achievements'>> = ({ filter }) => {
   const { completionPercentage, condition } = filter.params;
-  return <FilterPreviewGeneric filter={filter} displayData={`${completionPercentage}% or ${condition === 'above' ? 'more' : 'less'} achievements completed`} />;
+  const labelPrefix = {
+    'gt': `more than ${completionPercentage}%`,
+    'gte': `${completionPercentage}% or more`,
+    'lt': `less than ${completionPercentage}%`,
+    'lte': `${completionPercentage}% or less`
+  }[condition];
+  return <FilterPreviewGeneric filter={filter} displayData={`${labelPrefix} achievements completed`} />;
 };
 
 const SDCardFilterPreview: VFC<FilterPreviewProps<'sd card'>> = ({ filter }) => {

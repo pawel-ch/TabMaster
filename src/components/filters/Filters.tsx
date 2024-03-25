@@ -13,7 +13,7 @@ import { LuCombine } from "react-icons/lu";
 export type FilterType = 'collection' | 'installed' | 'regex' | 'friends' | 'tags' | 'whitelist' | 'blacklist' | 'merge' | 'platform' | 'deck compatibility' | 'review score' | 'time played' | 'size on disk' | 'release date' | 'last played' | 'demo' | 'streamable' | 'steam features' | 'achievements' | 'sd card';
 
 export type TimeUnit = 'minutes' | 'hours' | 'days';
-export type ThresholdCondition = 'above' | 'below';
+export type ThresholdCondition = 'gte' | 'lte' | 'gt' | 'lt';
 export type ReviewScoreType = 'metacritic' | 'steampercent';
 
 type CollectionFilterParams = {
@@ -94,15 +94,15 @@ export const FilterDefaultParams: { [key in FilterType]: FilterParams<key> } = {
   "merge": { filters: [], mode: 'and' },
   "platform": { platform: "steam" },
   "deck compatibility": { category: 3 },
-  "review score": { scoreThreshold: 50, condition: 'above', type: 'metacritic' },
-  "time played": { timeThreshold: 60, condition: 'above', units: 'minutes' },
-  "size on disk": { gbThreshold: 10, condition: 'above' },
-  "release date": { date: undefined, condition: 'above' },
-  "last played": { date: undefined, condition: 'above' },
+  "review score": { scoreThreshold: 50, condition: 'gte', type: 'metacritic' },
+  "time played": { timeThreshold: 60, condition: 'gte', units: 'minutes' },
+  "size on disk": { gbThreshold: 10, condition: 'gte' },
+  "release date": { date: undefined, condition: 'gte' },
+  "last played": { date: undefined, condition: 'gte' },
   "demo": { isDemo: true },
   "streamable": { isStreamable: true },
   "steam features": { features: [], mode: 'and' },
-  "achievements": { completionPercentage: 10, condition: 'above' },
+  "achievements": { completionPercentage: 10, condition: 'gte' },
   "sd card": { card: undefined }
 }
 
@@ -443,14 +443,14 @@ export class Filter {
     },
     'review score': (params: FilterParams<'review score'>, appOverview: SteamAppOverview) => {
       const score = params.type === 'metacritic' ? appOverview.metacritic_score : appOverview.review_percentage;
-      return params.condition === 'above' ? score >= params.scoreThreshold : score <= params.scoreThreshold;
+      return params.condition === 'gte' ? score >= params.scoreThreshold : score <= params.scoreThreshold;
     },
     'time played': (params: FilterParams<'time played'>, appOverview: SteamAppOverview) => {
       const minutesThreshold = params.units === 'minutes' ? params.timeThreshold : params.units === 'hours' ? params.timeThreshold * 60 : params.timeThreshold * 1440;
-      return params.condition === 'above' ? appOverview.minutes_playtime_forever >= minutesThreshold : appOverview.minutes_playtime_forever <= minutesThreshold;
+      return params.condition === 'gte' ? appOverview.minutes_playtime_forever >= minutesThreshold : appOverview.minutes_playtime_forever <= minutesThreshold;
     },
     'size on disk': (params: FilterParams<'size on disk'>, appOverview: SteamAppOverview) => {
-      return params.condition === 'above' ? Number(appOverview.size_on_disk) / 1024 ** 3 >= params.gbThreshold : Number(appOverview.size_on_disk) / 1024 ** 3 <= params.gbThreshold;
+      return params.condition === 'gte' ? Number(appOverview.size_on_disk) / 1024 ** 3 >= params.gbThreshold : Number(appOverview.size_on_disk) / 1024 ** 3 <= params.gbThreshold;
     },
     'release date': (params: FilterParams<'release date'>, appOverview: SteamAppOverview) => {
       let releaseTimeMs;
@@ -462,7 +462,7 @@ export class Filter {
       if (params.date) {
         const { day, month, year } = params.date;
 
-        if (params.condition === 'above') {
+        if (params.condition === 'gte') {
           return releaseTimeMs >= new Date(year, (month ?? 1) - 1, day ?? 1).getTime();
         } else {
           const dateIncludes = day === undefined ? (month === undefined ? DateIncludes.yearOnly : DateIncludes.monthYear) : DateIncludes.dayMonthYear;
@@ -478,7 +478,7 @@ export class Filter {
         //by days ago case
       } else {
         const today = new Date();
-        return params.condition === 'above' ?
+        return params.condition === 'gte' ?
           releaseTimeMs >= new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - params.daysAgo!).getTime() :
           releaseTimeMs < new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + 1 - params.daysAgo!).getTime();
       }
@@ -491,7 +491,7 @@ export class Filter {
       if (params.date) {
         const { day, month, year } = params.date;
 
-        if (params.condition === 'above') {
+        if (params.condition === 'gte') {
           return lastPlayedTimeMs >= new Date(year, (month ?? 1) - 1, day ?? 1).getTime();
         } else {
           const dateIncludes = day === undefined ? (month === undefined ? DateIncludes.yearOnly : DateIncludes.monthYear) : DateIncludes.dayMonthYear;
@@ -507,7 +507,7 @@ export class Filter {
         //by days ago case
       } else {
         const today = new Date();
-        return params.condition === 'above' ?
+        return params.condition === 'gte' ?
           lastPlayedTimeMs >= new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - params.daysAgo!).getTime() :
           lastPlayedTimeMs < new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + 1 - params.daysAgo!).getTime();
       }
@@ -528,7 +528,12 @@ export class Filter {
     },
     'achievements': (params: FilterParams<'achievements'>, appOverview: SteamAppOverview) => {
       const percentage = appAchievementProgressCache.GetAchievementProgress(appOverview.appid);
-      return params.condition === 'above' ? percentage >= params.completionPercentage : percentage <= params.completionPercentage;
+      return {
+        'gt': percentage > params.completionPercentage,
+        'gte': percentage >= params.completionPercentage,
+        'lt': percentage < params.completionPercentage,
+        'lte': percentage <= params.completionPercentage
+      }[params.condition];
     },
     'sd card': (params: FilterParams<'sd card'>, appOverview: SteamAppOverview) => {
       const card = params.card === undefined ? window.MicroSDeck?.CurrentCardAndGames : window.MicroSDeck?.CardsAndGames?.find(([card]) => card.uid == params.card);

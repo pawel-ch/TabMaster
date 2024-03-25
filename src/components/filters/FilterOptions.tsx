@@ -412,7 +412,7 @@ const ReviewScoreFilterOptions: VFC<FilterOptionsProps<'review score'>> = ({ ind
 
   return (
     <Field
-      label={reviewType === 'metacritic' ? `Metacritic score of ${value} or ${thresholdType === 'above' ? 'higher' : 'lower'}` : `At ${thresholdType === 'above' ? 'least' : 'most'} ${value}% positive Steam reviews`}
+      label={reviewType === 'metacritic' ? `Metacritic score of ${value} or ${thresholdType === 'gte' ? 'higher' : 'lower'}` : `At ${thresholdType === 'gte' ? 'least' : 'most'} ${value}% positive Steam reviews`}
       description={
         <Focusable style={{ display: 'flex', flexDirection: 'row' }}>
           <Slider value={value} min={0} max={100} onChange={onSliderChange} />
@@ -420,7 +420,7 @@ const ReviewScoreFilterOptions: VFC<FilterOptionsProps<'review score'>> = ({ ind
             <Dropdown rgOptions={[{ label: 'Metacritic', data: 'metacritic' }, { label: 'Steam ', data: 'steampercent' }]} selectedOption={reviewType} onChange={onReviewTypeChange} />
           </div>
           <div>
-            <Dropdown rgOptions={[{ label: 'At least', data: 'above' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
+            <Dropdown rgOptions={[{ label: 'At least', data: 'gte' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
           </div>
         </Focusable>}
     />
@@ -462,7 +462,7 @@ const TimePlayedFilterOptions: VFC<FilterOptionsProps<'time played'>> = ({ index
 
   return (
     <Field
-      label={`Played for ${time} ${time === 1 ? units.slice(0, -1) : units} or ${thresholdType === 'above' ? 'more' : 'less'}`}
+      label={`Played for ${time} ${time === 1 ? units.slice(0, -1) : units} or ${thresholdType === 'gte' ? 'more' : 'less'}`}
       description={
         <Focusable style={{ display: 'flex', flexDirection: 'row' }}>
           <Slider value={time} min={0} max={300} onChange={onSliderChange} />
@@ -478,7 +478,7 @@ const TimePlayedFilterOptions: VFC<FilterOptionsProps<'time played'>> = ({ index
             />
           </div>
           <div>
-            <Dropdown rgOptions={[{ label: 'At least', data: 'above' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
+            <Dropdown rgOptions={[{ label: 'At least', data: 'gte' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
           </div>
         </Focusable>}
     />
@@ -521,12 +521,12 @@ const SizeOnDiskFilterOptions: VFC<FilterOptionsProps<'size on disk'>> = ({ inde
 
   return (
     <Field
-      label={`${numericValue < 1 ? numericValue * 1000 : value} ${numericValue < 1 ? 'MB' : 'GB'} or ${thresholdType === 'above' ? 'more' : 'less'} on disk`}
+      label={`${numericValue < 1 ? numericValue * 1000 : value} ${numericValue < 1 ? 'MB' : 'GB'} or ${thresholdType === 'gte' ? 'more' : 'less'} on disk`}
       description={
         <Focusable style={{ display: 'flex', flexDirection: 'row' }} className="size-on-disk-row">
           <TextField value={value} onChange={onSliderChange} />
           <div style={{ marginLeft: '12px' }}>
-            <Dropdown rgOptions={[{ label: 'At least', data: 'above' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
+            <Dropdown rgOptions={[{ label: 'At least', data: 'gte' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
           </div>
         </Focusable>}
     />
@@ -586,7 +586,7 @@ const ReleaseDateFilterOptions: VFC<FilterOptionsProps<'release date'>> = ({ ind
   }
 
   return (
-    <Field label={`Released ${byDaysAgo ? `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${thresholdType === 'above' ? 'later' : 'earlier'}` : `${dateIncludes === DateIncludes.dayMonthYear ? 'on' : 'in'} or ${thresholdType === 'above' ? 'after' : 'before'}...`}`}
+    <Field label={`Released ${byDaysAgo ? `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${thresholdType === 'gte' ? 'later' : 'earlier'}` : `${dateIncludes === DateIncludes.dayMonthYear ? 'on' : 'in'} or ${thresholdType === 'gte' ? 'after' : 'before'}...`}`}
       description={
         <Focusable style={{ display: 'flex', flexDirection: 'row' }}>
           {byDaysAgo ?
@@ -623,7 +623,7 @@ const ReleaseDateFilterOptions: VFC<FilterOptionsProps<'release date'>> = ({ ind
             />
           </div>
           <div>
-            <Dropdown rgOptions={[{ label: 'Earliest', data: 'above' }, { label: 'Latest', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
+            <Dropdown rgOptions={[{ label: 'Earliest', data: 'gte' }, { label: 'Latest', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
           </div>
         </Focusable>}
     />
@@ -683,7 +683,7 @@ const LastPlayedFilterOptions: VFC<FilterOptionsProps<'last played'>> = ({ index
   }
 
   return (
-    <Field label={`Last played ${byDaysAgo ? `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${thresholdType === 'above' ? 'later' : 'earlier'}` : `${dateIncludes === DateIncludes.dayMonthYear ? 'on' : 'in'} or ${thresholdType === 'above' ? 'after' : 'before'}...`}`}
+    <Field label={`Last played ${byDaysAgo ? `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago or ${thresholdType === 'gte' ? 'later' : 'earlier'}` : `${dateIncludes === DateIncludes.dayMonthYear ? 'on' : 'in'} or ${thresholdType === 'gte' ? 'after' : 'before'}...`}`}
       description={
         <Focusable style={{ display: 'flex', flexDirection: 'row' }}>
           {byDaysAgo ?
@@ -720,7 +720,7 @@ const LastPlayedFilterOptions: VFC<FilterOptionsProps<'last played'>> = ({ index
             />
           </div>
           <div>
-            <Dropdown rgOptions={[{ label: 'Earliest', data: 'above' }, { label: 'Latest', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
+            <Dropdown rgOptions={[{ label: 'Earliest', data: 'gte' }, { label: 'Latest', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
           </div>
         </Focusable>}
     />
@@ -796,6 +796,12 @@ const SteamFeatureFilterOptions: VFC<FilterOptionsProps<'steam features'>> = ({ 
 const AchievementsFilterOptions: VFC<FilterOptionsProps<'achievements'>> = ({ index, setContainingGroupFilters, filter, containingGroupFilters }) => {
   const [value, setValue] = useState<number>(filter.params.completionPercentage);
   const [thresholdType, setThresholdType] = useState<ThresholdCondition>(filter.params.condition);
+  const labelPrefix = {
+    'gt': `more than ${value}%`,
+    'gte': `${value}% or more`,
+    'lt': `less than ${value}%`,
+    'lte': `${value}% or less`
+  }[thresholdType];
 
   function updateFilter(threshold: number, threshType: ThresholdCondition) {
     const updatedFilter = { ...filter };
@@ -818,12 +824,12 @@ const AchievementsFilterOptions: VFC<FilterOptionsProps<'achievements'>> = ({ in
 
   return (
     <Field
-      label={`${value}% or ${thresholdType === 'above' ? 'more' : 'less'} achievements completed`}
+      label={`${labelPrefix} achievements completed`}
       description={
         <Focusable style={{ display: 'flex', flexDirection: 'row' }}>
           <Slider value={value} min={1} max={100} onChange={onSliderChange} />
           <div style={{ marginLeft: '12px' }}>
-            <Dropdown rgOptions={[{ label: 'At least', data: 'above' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
+            <Dropdown rgOptions={[{ label: 'At least', data: 'gte' }, { label: 'At most', data: 'below' }]} selectedOption={thresholdType} onChange={onThreshTypeChange} />
           </div>
         </Focusable>}
     />
